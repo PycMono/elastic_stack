@@ -1,16 +1,16 @@
-package elastic
+package elasticUtil
 
 import (
 	"context"
 	"fmt"
-	elastic_v5 "gopkg.in/olivere/elastic.v5"
-	"moqikaka.com/elastic_stack/src/model"
+	"gopkg.in/olivere/elastic.v5"
+	"moqikaka.com/elastic_stack/src/elasticUtil/model"
 )
 
 // Elastic对象
-type Elastic struct {
+type ElasticObj struct {
 	// 客服端对象
-	client *elastic_v5.Client
+	client *elastic.Client
 
 	// 保存的地址
 	index string
@@ -27,7 +27,7 @@ type Elastic struct {
 // 返回值：
 // 1.IndexResponse is the result of indexing a document in Elasticsearch.
 // 2.错误信息
-func (this *Elastic) save(msg *model.MessageObj, msgType string) (*elastic_v5.IndexResponse, error) {
+func (this *ElasticObj) save(msg *model.MessageObj, msgType string) (*elastic.IndexResponse, error) {
 	indexRes, err := this.client.Index().
 		Index(this.index).
 		Type(msgType).
@@ -59,7 +59,7 @@ func (this *Elastic) save(msg *model.MessageObj, msgType string) (*elastic_v5.In
 // 结果：
 // 1.查询结果
 // 2.错误信息
-func (this *Elastic) search(query elastic_v5.Query) (*elastic_v5.SearchResult, error) {
+func (this *ElasticObj) search(query elastic.Query) (*elastic.SearchResult, error) {
 	resp, err := this.client.Search().
 		Index(this.index).
 		Type("doc").
@@ -83,8 +83,8 @@ func (this *Elastic) search(query elastic_v5.Query) (*elastic_v5.SearchResult, e
 // 返回值：
 // 1.Elastic对象
 // 2.错误对象
-func NewElastic(url, index string) (*Elastic, error) {
-	client, err := elastic_v5.NewClient(elastic_v5.SetURL(url))
+func NewElastic(url, index string) (*ElasticObj, error) {
+	client, err := elastic.NewClient(elastic.SetURL(url))
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func NewElastic(url, index string) (*Elastic, error) {
 		fmt.Println(fmt.Sprintf("已经已经存在了%v", exists))
 	}
 
-	return &Elastic{
+	return &ElasticObj{
 		client: client,
 		url:    url,
 		index:  index,

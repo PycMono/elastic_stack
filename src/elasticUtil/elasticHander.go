@@ -1,11 +1,11 @@
-package elastic
+package elasticUtil
 
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	elastic_v5 "gopkg.in/olivere/elastic.v5"
-	"moqikaka.com/elastic_stack/src/enum"
-	"moqikaka.com/elastic_stack/src/model"
+	"gopkg.in/olivere/elastic.v5"
+	"moqikaka.com/elastic_stack/src/elasticUtil/enum"
+	"moqikaka.com/elastic_stack/src/elasticUtil/model"
 	"moqikaka.com/elastic_stack/src/util"
 )
 
@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	elastic *Elastic
+	elasticObj *ElasticObj
 )
 
 func init() {
@@ -23,7 +23,7 @@ func init() {
 		panic(errors.New("创建NewElastic报错，请检测"))
 	}
 
-	elastic = tempElastic
+	elasticObj = tempElastic
 }
 
 // 打印错误日志
@@ -31,7 +31,7 @@ func init() {
 // msg：消息信息
 func LogError(msg interface{}) {
 	msgObj := model.NewMessageObj(util.GetGuid(), msg)
-	_, err := elastic.save(msgObj, enum.Debug)
+	_, err := elasticObj.save(msgObj, enum.Debug)
 	if err != nil {
 		return
 	}
@@ -42,7 +42,7 @@ func LogError(msg interface{}) {
 // msg：消息信息
 func LogDebug(msg interface{}) {
 	msgObj := model.NewMessageObj(util.GetGuid(), msg)
-	_, err := elastic.save(msgObj, enum.Debug)
+	_, err := elasticObj.save(msgObj, enum.Debug)
 	if err != nil {
 		return
 	}
@@ -53,7 +53,7 @@ func LogDebug(msg interface{}) {
 // msg：消息信息
 func LogInfo(msg interface{}) {
 	msgObj := model.NewMessageObj(util.GetGuid(), msg)
-	_, err := elastic.save(msgObj, enum.Info)
+	_, err := elasticObj.save(msgObj, enum.Info)
 	if err != nil {
 		return
 	}
@@ -64,7 +64,7 @@ func LogInfo(msg interface{}) {
 // msg：消息信息
 func LogWarn(msg interface{}) {
 	msgObj := model.NewMessageObj(util.GetGuid(), msg)
-	_, err := elastic.save(msgObj, enum.Warn)
+	_, err := elasticObj.save(msgObj, enum.Warn)
 	if err != nil {
 		return
 	}
@@ -72,8 +72,8 @@ func LogWarn(msg interface{}) {
 
 // 获取消息信息
 func GetMsg() {
-	termQuery := elastic_v5.NewTermQuery("Age", "20")
-	searchResult, err := elastic.search(termQuery)
+	termQuery := elastic.NewTermQuery("Age", "20")
+	searchResult, err := elasticObj.search(termQuery)
 	if err != nil {
 		return
 	}
